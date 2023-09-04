@@ -49,3 +49,4 @@ GlassGem is already completely usable for the most common scenarios. However, th
 - [ ] Support for using GlassGem from Objective-C
 - [ ] Support for arbitrary delimiter bytes, not just 0x00
 - [ ] Performance improvements (while still emphasizing readability)
+- [ ] Make documentation work with DocC
