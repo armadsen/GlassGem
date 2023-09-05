@@ -1,5 +1,10 @@
 # GlassGem
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Farmadsen%2FGlassGem%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/armadsen/GlassGem)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Farmadsen%2FGlassGem%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/armadsen/GlassGem)
+
+---
+
 GlassGem is a Swift package that implements the [Consistent Overhead Byte Stuffing (COBS)](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing) algorithm for encoding arbitrary data with single byte packet delimiters.
 
 It consists of an extension on `Data` with exactly two methods: `encodedUsingCOBS()` and `decodedFromCOBS()`. 
