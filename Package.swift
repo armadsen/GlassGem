@@ -9,13 +9,19 @@ let package = Package(
         .library(
             name: "GlassGem",
             targets: ["GlassGem"]),
+        .library(
+            name: "GlassGemFoundation",
+            targets: ["GlassGemFoundation"]),
     ],
     targets: [
         .target(
             name: "GlassGem",
             dependencies: []),
+        .target(
+            name: "GlassGemFoundation",
+            dependencies: ["GlassGem"]),
         .testTarget(
             name: "GlassGemTests",
-            dependencies: ["GlassGem"]),
+            dependencies: ["GlassGemFoundation"]),
     ]
 )
