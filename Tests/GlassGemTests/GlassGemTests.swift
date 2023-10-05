@@ -26,7 +26,7 @@
 //  SOFTWARE.
 
 import XCTest
-@testable import GlassGem
+@testable import GlassGemFoundation
 
 final class GlassGemTests: XCTestCase {
 

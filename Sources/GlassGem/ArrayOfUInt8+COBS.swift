@@ -1,5 +1,5 @@
 //
-//  Data+Cobs.swift
+//  ArrayOfUInt8+Cobs.swift
 //
 //  Created by Andrew R Madsen on 9/2/23.
 //
@@ -25,28 +25,26 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-import Foundation
-
 /// This extension provides methods for encoding and decoding data using the Consistent Overhead Byte Stuffing (COBS)
 /// algorithm. COBS is way to packetize data for transmission over possibly error-prone communication links. It is very efficient/lower overhead
 /// using the zero (0x00) byte as a packet delimiter, and replacing zeros in the actual data being sent with minimal replacement data.
 /// For more information, see https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing. This implementation
 /// prioritizes readibility over performance, as it is used (by the author) for very small amounts of data.
-public extension Data {
+public extension Array where Element == UInt8 {
 
 
     /// Encode the receiver using the COBS algorithm. The result will always end in a zero (0x00) byte, which is the packet
     /// delimiter under standard COBS.
     /// - Returns: A new Data object containing the receiver's data encoded using COBS.
-    func encodedUsingCOBS() -> Data {
+    func encodedUsingCOBS() -> [UInt8] {
         // Here we're using the 'Prefixed block description' encoding algorithm
         var scratch = self
 
         // 1. Append a zero byte
-        scratch.append(0)
+        scratch += [0]
 
-        var groups = [Data]()
-        var currentGroup = Data()
+        var groups = [[UInt8]]()
+        var currentGroup = [UInt8]()
         var currentCount: UInt8 = 0
 
         // 2. Break into groups of either 254 non-zero bytes or 0-253 non-zero bytes followed by a zero byte
@@ -55,7 +53,7 @@ public extension Data {
             // If we see a zero byte, or we're up to 253 non-zero bytes, we've finished a group
             if byte == 0 || currentCount >= 253 {
                 groups.append(currentGroup)
-                currentGroup = Data()
+                currentGroup = [UInt8]()
                 currentCount = 0
             } else { // Otherwise, just keep building the current group
                 currentCount += 1
@@ -73,7 +71,7 @@ public extension Data {
         }
 
         // 4. Concatenate all encoded groups
-        var result = Data(groups.flatMap { $0 })
+        var result = [UInt8](groups.flatMap { $0 })
         // 5. Append a final trailing zero, which is the packet delimiter
         result.append(0)
 
@@ -82,16 +80,16 @@ public extension Data {
 
     /// Decode the receiver using the COBS algorithm. Calling this on data that is not COBS encoded will
     /// produce surprising results.
-    /// - Returns: An array of individual Data objects each representing a packet in the original COBS encoded receiver. Note that the packet delimiter zero bytes will be removed from each packet.
-    func decodedFromCOBS() -> [Data] {
+    /// - Returns: An array of individual [UInt8] objects each representing a packet in the original COBS encoded receiver. Note that the packet delimiter zero bytes will be removed from each packet.
+    func decodedFromCOBS() -> [[UInt8]] {
         // 1. Split the data into invidual packets, which are separated by zero bytes
         let rawPackets = self.split(separator: 0)
-        var result = [Data]()
+        var result = [[UInt8]]()
         result.reserveCapacity(rawPackets.count)
 
         // 2. Loop through each packet
         for var packet in rawPackets {
-            var groupHeaderIndexesToRemove = [Data.Index]()
+            var groupHeaderIndexesToRemove = [[UInt8].Index]()
 
             // 3. The first byte is always the index of the first zero byte
             var nextZeroOffset = Int(packet[packet.startIndex])
@@ -126,7 +124,7 @@ public extension Data {
 
             // 7. Remove the first byte which is never part of the original (see step 3 in encoding algorithm)
             packet.removeFirst()
-            result.append(packet)
+            result.append(Array(packet))
         }
 
         return result
